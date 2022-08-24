@@ -9863,10 +9863,10 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 6273:
+/***/ 8162:
 /***/ ((module) => {
 
-module.exports = eval("require")("./csv-stringify/lib/sync.js");
+module.exports = eval("require")("./csv-stringify/lib/sync");
 
 
 /***/ }),
@@ -10066,7 +10066,7 @@ var __webpack_exports__ = {};
 (() => {
 const core = __nccwpck_require__(8864)
 const github = __nccwpck_require__(6366)
-const stringify = __nccwpck_require__(6273)
+const stringify = __nccwpck_require__(8162)
 const arraySort = __nccwpck_require__(7109)
 const { GitHub } = __nccwpck_require__(9562)
 const { retry } = __nccwpck_require__(2497)

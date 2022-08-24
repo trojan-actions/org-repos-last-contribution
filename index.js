@@ -1,6 +1,6 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
-const stringify = require('csv-stringify/lib/sync')
+const stringify = require('./csv-stringify/lib/sync.js')
 const arraySort = require('array-sort')
 const { GitHub } = require('@actions/github/lib/utils')
 const { retry } = require('@octokit/plugin-retry.js')

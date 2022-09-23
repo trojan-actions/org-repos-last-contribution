@@ -46,30 +46,41 @@ const octokit = new MyOctokit({
     let repoArray = []
 
     const query = `
-      query ($owner: String!, $cursorID: String) {
-        organization(login: $owner) {
-          repositories(first: 100, after: $cursorID) {
-            nodes {
+query ($owner: String!, $cursorID: String) {
+  organization(login: $owner) {
+    repositories(first: 100, after: $cursorID) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      nodes {
+        name
+        createdAt
+        primaryLanguage {
+          name
+        }
+        languages(first: 100) {
+          nodes {
+            name
+          }
+        }
+        updatedAt
+        pushedAt
+        diskUsage
+        collaborators(first: 10) {
+          edges {
+            permission
+            node {
+              email
               name
-              createdAt
-              primaryLanguage {
-                name
-              }
-              languages(first:100) {
-                nodes {
-                  name
-                }
-              }
-              updatedAt
-              pushedAt
-            }
-            pageInfo {
-              hasNextPage
-              endCursor
+              login
             }
           }
         }
       }
+    }
+  }
+}
     `
 
     let hasNextPageMember = false
@@ -110,11 +121,19 @@ async function repoDirector(repoArray) {
       filteredArray.forEach((element) => {
         const repoName = element.name
         const pushedAt = element.pushedAt
-        const updatedAt = elementupdatedAt
+        const updatedAt = element.updatedAt
         const primaryLanguage = element.primaryLanguage.name
         const createdDate = element.createdDate
+        const diskUsage = element.diskUsage
+        const admins = []
+        
+        element.collaborators.forEach((element) => {
+          if (element.collaborators.edges.permission === "ADMIN") {
+            admins.push(element.collaborators.edges.node.login)
+          }
+        })
 
-        csvArray.push({ repoName, pushedAt, updatedAt, createdDate, primaryLanguage })
+        csvArray.push({ repoName, pushedAt, updatedAt, createdDate, primaryLanguage, diskUsage, admins })
       })
 
       sortTotals(csvArray)
@@ -132,7 +151,9 @@ async function sortTotals(csvArray) {
       pushedAt: `last pushed`,
       updatedAt: `last updated`,
       createdDate: 'Repo creation date',
-      primaryLanguage: 'Primary language'
+      primaryLanguage: 'Primary language',
+      diskUsage: 'Disk usage',
+      admins: 'Admins'
     }
 
     const sortColumn = core.getInput('sort', { required: false }) || 'additions'
